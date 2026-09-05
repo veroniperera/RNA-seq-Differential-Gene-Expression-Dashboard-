@@ -5,7 +5,7 @@ An interactive dashboard for exploring differential gene expression, built on a 
 **Dataset:** [GSE110114](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110114) — Breast cancer tissue vs. adjacent normal tissue (13 samples: 10 tumor, 3 normal)
 
 ## Live Demo
-🔗 [View the dashboard](https://your-app-url.streamlit.app) <!-- replace with your actual deployed URL -->
+🔗 [View the dashboard][(https://your-app-url.streamlit.app](https://gffy8kkjy9a5eamdafehcm.streamlit.app/)) <!-- replace with your actual deployed URL -->
 
 ## Features
 
