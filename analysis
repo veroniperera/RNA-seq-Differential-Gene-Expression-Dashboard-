@@ -130,6 +130,6 @@ if SAVE:
     results_df.to_csv(os.path.join(OUTPUT_PATH, "GSE110114_DESeq2_results.csv"))
     gene_map.to_csv(os.path.join(OUTPUT_PATH, "gene_symbol_map.csv"))
     go_df.to_csv(os.path.join(OUTPUT_PATH, "GO_enrichment_results.csv"), index=False)
-    kegg_df = pd.read_csv(os.path.join(OUTPUT_PATH, "KEGG_enrichment_results.csv"))
+    kegg_results.res2d.to_csv(os.path.join(OUTPUT_PATH, "KEGG_enrichment_results.csv"), index=False)  # ✅ FIX
     metadata.to_csv(os.path.join(OUTPUT_PATH, "metadata.csv"))
 
