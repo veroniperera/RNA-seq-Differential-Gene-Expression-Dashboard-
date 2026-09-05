@@ -6,11 +6,6 @@ import os
 import pickle as pkl 
 import pandas as pd 
 import numpy as np
-import gseapy as gp
-import GEOparse as g
-from pydeseq2.dds  import DeseqDataSet
-from pydeseq2.default_inference import DefaultInference 
-from pydeseq2.ds import DeseqStats
 import streamlit as st 
 import plotly.express as px 
 import plotly.graph_objects as go 
