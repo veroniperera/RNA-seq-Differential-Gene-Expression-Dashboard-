@@ -14,7 +14,7 @@ from scipy.cluster.hierarchy  import linkage, dendrogram
 # ------------------------
 # CONFIG
 # ------------------------
-OUTPUT_PATH = r"C:\Users\HP\Downloads\OneDrive\Portfolio\PROJECT 1"
+OUTPUT_PATH = r"C:\Users\HP\Downloads\OneDrive\Portfolio\Data "
 
 st.set_page_config(
     page_title="RNA-seq DGE Dashboard | GSE110114",
