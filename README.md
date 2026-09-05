@@ -1,6 +1,6 @@
 # RNA-seq-Differential-Gene-Expression-Dashboard-
 An interactive  dashboard to show the transcriptomic differences between primary and metastatic breast tumours. <break>
-Features 
+<break> Features <break> 
 Data Ingestion: Load raw count matrix and clinical/sample metadata directly from GEO (GSE316391), with support for custom uploads of other count matrices.
 Data Validation: Sample-metadata matching checks, missing value detection, library size warnings with helpful error messages 
 Pre-processing pipeline: Low-expression gene filtering and DESeq2 median-of-ratios normalization.
