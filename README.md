@@ -72,6 +72,10 @@ python analysis.py
 - **8,577** genes significantly differentially expressed (padj < 0.05, |log2FC| > 1)
 - Top enriched pathways are predominantly **immune-related** (MHC complexes, T cell proliferation, interferon-gamma signaling) — consistent with known immune cell infiltration in tumor tissue
 - Full results and pathway tables browsable directly in the dashboard's Enrichment tab
+- Genes available: HLA-DRB5, HLA-B, HLA-C, HLA-A, HLA-F, HLA-DMA, HLA-DMB, HLA-DPB1, HLA-DRA
+T cell/costimulation: CD86, CD80, CD40, CD274, CD3G, CD3E, CD3D, IL21, IL12B
+Cytotoxicity: PRF1, FASLG
+Other recurring hits: TFRC, CXCR4, ITGB2, ITGAM, CSF3
 
 ## Limitations
 
