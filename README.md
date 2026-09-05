@@ -5,7 +5,12 @@ An interactive dashboard for exploring differential gene expression, built on a 
 **Dataset:** [GSE110114](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110114) — Breast cancer tissue vs. adjacent normal tissue (13 samples: 10 tumor, 3 normal)
 
 ## Live Demo
-🔗 [View the dashboard][(https://your-app-url.streamlit.app](https://gffy8kkjy9a5eamdafehcm.streamlit.app/)) <!-- replace with your actual deployed URL -->
+🔗 [View the dashboard][(https://your-app-url.streamlit.app](https://gffy8kkjy9a5eamdafehcm.streamlit.app/)) 
+- Genes available: HLA-DRB5, HLA-B, HLA-C, HLA-A, HLA-F, HLA-DMA, HLA-DMB, HLA-DPB1, HLA-DRA
+T cell/costimulation: CD86, CD80, CD40, CD274, CD3G, CD3E, CD3D, IL21, IL12B
+Cytotoxicity: PRF1, FASLG
+Other recurring hits: TFRC, CXCR4, ITGB2, ITGAM, CSF3
+
 
 ## Features
 
@@ -72,10 +77,6 @@ python analysis.py
 - **8,577** genes significantly differentially expressed (padj < 0.05, |log2FC| > 1)
 - Top enriched pathways are predominantly **immune-related** (MHC complexes, T cell proliferation, interferon-gamma signaling) — consistent with known immune cell infiltration in tumor tissue
 - Full results and pathway tables browsable directly in the dashboard's Enrichment tab
-- Genes available: HLA-DRB5, HLA-B, HLA-C, HLA-A, HLA-F, HLA-DMA, HLA-DMB, HLA-DPB1, HLA-DRA
-T cell/costimulation: CD86, CD80, CD40, CD274, CD3G, CD3E, CD3D, IL21, IL12B
-Cytotoxicity: PRF1, FASLG
-Other recurring hits: TFRC, CXCR4, ITGB2, ITGAM, CSF3
 
 ## Limitations
 
