@@ -1,0 +1,135 @@
+#========================
+# IMPORT RELEVANT PACKAGES 
+#========================
+from ast import If
+import os 
+import pickle as pkl 
+import pandas as pd 
+import numpy as np
+import gseapy as gp
+import GEOparse as g
+from pydeseq2.dds  import DeseqDataSet
+from pydeseq2.default_inference import DefaultInference 
+from pydeseq2.ds import DeseqStats
+import streamlit as st 
+import plotly.express as px 
+import plotly.graph_objects as go 
+from scipy.cluster.hierarchy  import linkage, dendrogram 
+
+SAVE = True   # ✅ capital T only
+OUTPUT_PATH = r"C:\Users\HP\Downloads\OneDrive\Portfolio\PROJECT 1"
+
+if SAVE : 
+     os.makedirs(OUTPUT_PATH, exist_ok=True)
+
+# ========================
+# LOAD DATA
+#========================
+# 1. Download the data from GEO database using GEOparse 
+gse = g.get_GEO(geo="GSE110114", destdir=OUTPUT_PATH, 
+    annotate_gpl=True)
+
+counts_df = pd.read_csv(
+    os.path.join(OUTPUT_PATH, "GSE110114_raw_counts_GRCh38.p13_NCBI.tsv.gz"),  # ✅ FIX
+    sep="\t",
+    index_col=0
+)
+
+# EXTRACT THE METADATA FOR EACH SAMPLES 
+metadata_rows = []
+for gsm_name, gsm in gse.gsms.items ():
+     tissue_type = gsm.metadata.get("source_name_ch1", ["unknown"])[0]
+     metadata_rows.append({"sample": gsm_name, "condition" : tissue_type })
+
+metadata = pd. DataFrame(metadata_rows).set_index("sample")
+
+counts_df.columns = counts_df.columns.astype(str)
+metadata.index = metadata.index.astype(str)
+print(metadata["condition"].value_counts())
+
+#ENSURE SAMPLES ALIGNMENT BETWEEN COUNTS AND METADATA 
+counts_df = counts_df.loc[:, metadata.index]
+
+#SETUP THE DESEQ2 DATASET 
+inference = DefaultInference(n_cpus=8)
+dds = DeseqDataSet(
+    counts=counts_df.T,     
+    metadata=metadata,
+    design_factors="condition",
+    refit_cooks=True,      
+    inference=inference,   
+)
+
+#========================
+# RUN DESEQ2 ANALYSIS
+#========================
+dds.deseq2()
+# SETUP THE CONTRAST ( TUMOUR VS NORMAL )
+contrast_res = DeseqStats(dds, contrast=["condition", "Breast cancer tissue", "Adjacent normal tissue"], inference=inference)
+contrast_res.summary()
+
+results_df = contrast_res.results_df
+
+print(f"Number of significant genes: {sum(results_df['padj'] < 0.05)}")
+
+if SAVE:
+     contrast_res.results_df.to_csv(os.path.join(OUTPUT_PATH, "GSE110114_DESeq2_results.csv"))
+   
+#========================
+# RUN GENE SET ENRICHMENT ANALYSIS (GSEA)
+#========================
+#Get significant genes based on adjusted p-value threshold
+significant_genes = results_df[
+    (results_df["padj"] < 0.05) & (abs(results_df["log2FoldChange"]) > 1)
+]
+print(significant_genes.shape)
+
+# Get gene symbols for significant genes
+import mygene 
+mg = mygene.MyGeneInfo()
+gene_ids = [str(g) for g in significant_genes.index.tolist()]
+gene_map = mg.querymany(gene_ids,
+                        scopes="entrezgene",
+                        fields ="symbol",
+                        species = "human",
+                        as_dataframe=True)
+print(gene_map.columns.tolist())
+print(f"Mapped {len(gene_map)} / {len(significant_genes)} genes to symbols")
+if "symbol" in gene_map.columns:
+     sig_symbols = gene_map["symbol"].dropna().tolist()
+else: 
+     raise ValueError("The 'symbol' column is missing from the gene_map DataFrame. Please check the mapping results.")
+print(f"Number of significant genes with symbols: {len(sig_symbols)}") 
+if len(gene_map) == 0:
+    print("No gene symbols were mapped. Please check the gene identifiers and ensure they are valid.")
+
+go_results = gp.enrichr(
+    gene_list=gene_map["symbol"].dropna().unique().tolist(),
+    gene_sets=["GO_Biological_Process_2021", "GO_Cellular_Component_2021", "GO_Molecular_Function_2021"],
+    organism="human",
+    outdir=None,   
+)
+
+go_df = go_results.res2d
+print(go_df.shape)
+print(go_df.sort_values("Adjusted P-value").head(10))
+
+# Save manually instead of relying on outdir=
+if SAVE:
+    go_df.to_csv(os.path.join(OUTPUT_PATH, "GO_enrichment_results.csv"), index=False)
+
+kegg_results = gp.enrichr(
+    gene_list=gene_map["symbol"].dropna().unique().tolist(),  
+    gene_sets=["KEGG_2021_Human"],
+    organism="human",
+    outdir=None
+)
+print(kegg_results.res2d.head(10))
+
+if SAVE:
+    results_df.to_csv(os.path.join(OUTPUT_PATH, "GSE110114_DESeq2_results.csv"))
+    gene_map.to_csv(os.path.join(OUTPUT_PATH, "gene_symbol_map.csv"))
+    go_df.to_csv(os.path.join(OUTPUT_PATH, "GO_enrichment_results.csv"), index=False)
+    kegg_df = pd.read_csv(os.path.join(OUTPUT_PATH, "KEGG_enrichment_results.csv"))
+    metadata.to_csv(os.path.join(OUTPUT_PATH, "metadata.csv"))
+
